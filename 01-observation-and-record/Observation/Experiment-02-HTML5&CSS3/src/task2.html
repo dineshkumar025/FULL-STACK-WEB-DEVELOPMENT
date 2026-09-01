@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>My Styled Webpage</title>
+
+<style>
+
+body{
+    background:linear-gradient(lightblue,white);
+    font-family:Arial;
+}
+
+header{
+    background-color:blue;
+    color:white;
+    text-align:center;
+    padding:15px;
+    text-shadow:2px 2px gray;
+}
+
+nav{
+    background-color:black;
+    padding:10px;
+    text-align:center;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:15px;
+}
+
+nav a:hover{
+    color:yellow;
+}
+
+canvas{
+    border:2px solid black;
+    background-color:white;
+}
+
+.card{
+    border:2px solid black;
+    border-radius:10px;
+    background-color:white;
+    margin:20px;
+    padding:15px;
+    box-shadow:4px 4px 5px gray;
+}
+
+h2{
+    font-family:Georgia;
+}
+
+p{
+    font-size:16px;
+}
+
+button{
+    background-color:blue;
+    color:white;
+    padding:8px;
+    border:none;
+}
+
+button:hover{
+    background-color:green;
+}
+
+footer{
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>My Styled Webpage</h1>
+
+<p>HTML5 Canvas and CSS3 Example</p>
+
+</header>
+
+<nav>
+
+<a href="#">Home</a>
+
+<a href="#">About</a>
+
+<a href="#">Services</a>
+
+<a href="#">Contact</a>
+
+</nav>
+
+<br>
+
+<center>
+
+<h2>Canvas Example</h2>
+
+<canvas id="myCanvas" width="400" height="220"></canvas>
+
+</center>
+
+<div class="card">
+
+<h2>HTML</h2>
+
+<p>HTML is used to create web pages.</p>
+
+<button>Read More</button>
+
+</div>
+
+<div class="card">
+
+<h2>CSS</h2>
+
+<p>CSS is used to style web pages.</p>
+
+<button>Learn</button>
+
+</div>
+
+<div class="card">
+
+<h2>Canvas</h2>
+
+<p>Canvas is used to draw shapes and text.</p>
+
+<button>Example</button>
+
+</div>
+
+<footer>
+
+<p>Designed by Dinesh Kumar</p>
+
+</footer>
+
+<script>
+
+var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+
+ctx.fillStyle="red";
+ctx.fillRect(30,30,100,60);
+
+ctx.beginPath();
+ctx.arc(220,60,30,0,2*Math.PI);
+ctx.fillStyle="blue";
+ctx.fill();
+
+ctx.beginPath();
+ctx.moveTo(30,150);
+ctx.lineTo(350,150);
+ctx.stroke();
+
+ctx.font="20px Arial";
+ctx.fillStyle="black";
+ctx.fillText("Dinesh Kumar",120,190);
+
+</script>
+
+</body>
+
+</html>
