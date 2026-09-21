@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Question 4 - DOM Manipulation Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        .box {
+            padding: 20px;
+            border: 2px solid black;
+            width: 350px;
+            margin-top: 15px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>DOM (Document Object Model) Demonstration</h2>
+    <p>The DOM represents the HTML document as a tree structure of objects that JavaScript can dynamically change.</p>
+
+    <!-- Target Element -->
+    <div id="myBox" class="box">
+        <h3 id="heading">Original Title</h3>
+        <p id="para">This is original text inside paragraph.</p>
+    </div>
+
+    <br>
+    <button onclick="changeContent()">1. Change Content</button>
+    <button onclick="changeStyle()">2. Change Style</button>
+    <button onclick="changeAttribute()">3. Change Attribute</button>
+
+    <script>
+        // 1. Change Content using innerHTML
+        function changeContent() {
+            document.getElementById("heading").innerHTML = "Updated Title with JavaScript!";
+            document.getElementById("para").innerHTML = "Content changed dynamically!";
+        }
+
+        // 2. Change Style using style property
+        function changeStyle() {
+            let box = document.getElementById("myBox");
+            box.style.backgroundColor = "#e0f7fa";
+            box.style.borderColor = "blue";
+            box.style.color = "#006064";
+        }
+
+        // 3. Change Attribute using setAttribute
+        function changeAttribute() {
+            let box = document.getElementById("myBox");
+            box.setAttribute("title", "Hovered Box Tooltip");
+            alert("Attribute 'title' set to 'Hovered Box Tooltip'. Hover over the box to see!");
+        }
+    </script>
+
+</body>
+</html>
