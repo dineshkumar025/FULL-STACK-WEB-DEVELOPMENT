@@ -35,9 +35,13 @@ Welcome to the **Full Stack Web Development** repository. This repository is org
 │   ├── 02-javascript/
 │   ├── 03-node-and-express/
 │   ├── 04-mongodb/
-│   └── 05-frontend-frameworks/
-│       ├── react-components-props/
-│       └── state-management-hooks/
+│   ├── 05-frontend-frameworks/
+│   │   ├── react-components-props/
+│   │   └── state-management-hooks/
+│   ├── test1/          # HTML5 Semantic Structures, Tables & Forms
+│   ├── test2/          # CSS3 Flexbox, CSS Grid & Responsive Design
+│   ├── test3/          # JavaScript ES6+, Higher-Order Functions & Classes
+│   └── test4/          # Dynamic DOM Manipulation, Event Listeners & Validation
 │
 ├── 03-assignments/
 │   ├── assignment-01-responsive-portfolio/
@@ -58,9 +62,9 @@ Welcome to the **Full Stack Web Development** repository. This repository is org
 
 ---
 
-## 🚀 Sections Overview
+## 🚀 Practice Tests Overview (`02-topic-wise-practice/`)
 
-1. **01-observation-and-record**: Weekly lab records, source code, and verification screenshots covering HTML5, CSS3, JavaScript ES6+, Node.js, Express.js, MongoDB, Mongoose, and MERN integration.
-2. **02-topic-wise-practice**: Hands-on exercises organized by specific topics and tech stacks.
-3. **03-assignments**: Portfolio and REST API assignments.
-4. **04-assessments**: Internal lab assessments and evaluation projects.
+- **`test1/`**: HTML5 Semantic Webpage layout, interactive course table, and structured student registration form.
+- **`test2/`**: CSS3 Flexbox navigation, hero banner, CSS Grid project layout, design system variables, and responsive media queries.
+- **`test3/`**: ES6 JavaScript practice covering array helper methods (`map`, `filter`, `reduce`), Promises (`function.js`), and OOP class management (`object.js`).
+- **`test4/`**: Interactive task management web application with real-time DOM manipulation, form validation, filter/search capabilities, and notification toasts.
