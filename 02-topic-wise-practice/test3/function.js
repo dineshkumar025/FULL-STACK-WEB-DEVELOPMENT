@@ -1,4 +1,4 @@
-// Array
+// Array of Student Marks
 let marks = [85, 90, 78, 88, 95];
 
 // Function to display marks
@@ -6,18 +6,16 @@ function displayMarks(arr) {
     console.log("Student Marks:", arr);
 }
 
-// Function to calculate total
+// Function to calculate total marks
 function totalMarks(arr) {
     let total = 0;
-
     for (let i = 0; i < arr.length; i++) {
         total += arr[i];
     }
-
     return total;
 }
 
-// Function to calculate average
+// Function to calculate average marks
 function averageMarks(arr) {
     return totalMarks(arr) / arr.length;
 }
@@ -28,16 +26,12 @@ function addMark(arr, mark) {
     return arr;
 }
 
+// Program Execution
 displayMarks(marks);
-
 console.log("Total Marks:", totalMarks(marks));
-
 console.log("Average Marks:", averageMarks(marks));
 
 console.log("After Adding New Mark:");
-
 addMark(marks, 92);
-
 displayMarks(marks);
-
 console.log("New Total:", totalMarks(marks));
