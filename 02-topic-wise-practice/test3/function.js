@@ -1,73 +1,43 @@
-/**
- * Practice Test 3 - ES6 JavaScript Functions & Array Manipulation
- * Topics covered: Higher-Order Functions, Arrow Functions, Array Methods (map, filter, reduce), Promises, Destructuring
- */
+// Array
+let marks = [85, 90, 78, 88, 95];
 
-// 1. Student Sample Dataset
-const studentRecords = [
-    { id: 101, name: "Alice Johnson", marks: [85, 90, 92], status: "Active", department: "Computer Science" },
-    { id: 102, name: "Bob Smith", marks: [65, 70, 68], status: "Inactive", department: "Information Tech" },
-    { id: 103, name: "Charlie Brown", marks: [95, 98, 94], status: "Active", department: "Computer Science" },
-    { id: 104, name: "Diana Prince", marks: [78, 82, 80], status: "Active", department: "Electrical Eng" },
-    { id: 105, name: "Ethan Hunt", marks: [55, 60, 58], status: "Active", department: "Computer Science" }
-];
+// Function to display marks
+function displayMarks(arr) {
+    console.log("Student Marks:", arr);
+}
 
-// 2. Arrow Function to calculate average score
-const calculateAverage = (marks) => {
-    const total = marks.reduce((sum, score) => sum + score, 0);
-    return (total / marks.length).toFixed(2);
-};
+// Function to calculate total
+function totalMarks(arr) {
+    let total = 0;
 
-// 3. Higher-order function to filter high performers (Average >= 80)
-const getTopPerformers = (students, minAvg = 80) => {
-    return students
-        .map(student => ({
-            ...student,
-            averageScore: parseFloat(calculateAverage(student.marks))
-        }))
-        .filter(student => student.averageScore >= minAvg)
-        .sort((a, b) => b.averageScore - a.averageScore);
-};
+    for (let i = 0; i < arr.length; i++) {
+        total += arr[i];
+    }
 
-// 4. Summarize department statistics using reduce
-const summarizeByDepartment = (students) => {
-    return students.reduce((acc, student) => {
-        const dept = student.department;
-        if (!acc[dept]) {
-            acc[dept] = { totalStudents: 0, activeStudents: 0 };
-        }
-        acc[dept].totalStudents += 1;
-        if (student.status === "Active") {
-            acc[dept].activeStudents += 1;
-        }
-        return acc;
-    }, {});
-};
+    return total;
+}
 
-// 5. Async Function simulation with Promises
-const fetchStudentById = (id) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const student = studentRecords.find(s => s.id === id);
-            if (student) {
-                resolve({ success: true, data: student });
-            } else {
-                reject({ success: false, message: `Student ID ${id} not found.` });
-            }
-        }, 500);
-    });
-};
+// Function to calculate average
+function averageMarks(arr) {
+    return totalMarks(arr) / arr.length;
+}
 
-// --- Execution & Console Outputs ---
-console.log("=== Practice Test 3: ES6 Function Execution ===");
+// Function to add a new mark
+function addMark(arr, mark) {
+    arr.push(mark);
+    return arr;
+}
 
-console.log("\n1. Top Performing Students (Avg >= 80):");
-console.log(getTopPerformers(studentRecords));
+displayMarks(marks);
 
-console.log("\n2. Department Summary Statistics:");
-console.log(summarizeByDepartment(studentRecords));
+console.log("Total Marks:", totalMarks(marks));
 
-// Testing Async fetch
-fetchStudentById(103)
-    .then(response => console.log("\n3. Async Fetch Result:", response.data.name, "| Department:", response.data.department))
-    .catch(err => console.error("\n3. Async Fetch Error:", err.message));
+console.log("Average Marks:", averageMarks(marks));
+
+console.log("After Adding New Mark:");
+
+addMark(marks, 92);
+
+displayMarks(marks);
+
+console.log("New Total:", totalMarks(marks));

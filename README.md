@@ -31,17 +31,10 @@ Welcome to the **Full Stack Web Development** repository. This repository is org
 │           └── server/
 │
 ├── 02-topic-wise-practice/
-│   ├── 01-html-and-css/
-│   ├── 02-javascript/
-│   ├── 03-node-and-express/
-│   ├── 04-mongodb/
-│   ├── 05-frontend-frameworks/
-│   │   ├── react-components-props/
-│   │   └── state-management-hooks/
-│   ├── test1/          # HTML5 Semantic Structures, Tables & Forms
-│   ├── test2/          # CSS3 Flexbox, CSS Grid & Responsive Design
-│   ├── test3/          # JavaScript ES6+, Higher-Order Functions & Classes
-│   └── test4/          # Dynamic DOM Manipulation, Event Listeners & Validation
+│   ├── test1/          # Static Webpage with HTML Elements, Tables & Forms
+│   ├── test2/          # Styled Webpage with CSS Header, Nav, Cards & Flexbox
+│   ├── test3/          # JavaScript Functions, Array Operations & Object Library System
+│   └── test4/          # Dynamic Webpage with Live Clock, Task Manager & Theme Switcher
 │
 ├── 03-assignments/
 │   ├── assignment-01-responsive-portfolio/
@@ -62,9 +55,9 @@ Welcome to the **Full Stack Web Development** repository. This repository is org
 
 ---
 
-## 🚀 Practice Tests Overview (`02-topic-wise-practice/`)
+## 🚀 Practice Tests (`02-topic-wise-practice/`)
 
-- **`test1/`**: HTML5 Semantic Webpage layout, interactive course table, and structured student registration form.
-- **`test2/`**: CSS3 Flexbox navigation, hero banner, CSS Grid project layout, design system variables, and responsive media queries.
-- **`test3/`**: ES6 JavaScript practice covering array helper methods (`map`, `filter`, `reduce`), Promises (`function.js`), and OOP class management (`object.js`).
-- **`test4/`**: Interactive task management web application with real-time DOM manipulation, form validation, filter/search capabilities, and notification toasts.
+- **`test1/`**: Simple HTML5 page containing formatting tags, course lists, table data, and a contact form.
+- **`test2/`**: CSS styled page with header gradient, navigation bar, flexbox cards, and button hover states.
+- **`test3/`**: `function.js` (array calculations and marks handling) & `object.js` (Library management system class).
+- **`test4/`**: Dynamic single-file webpage featuring live clock, dynamic task addition, and theme color options.

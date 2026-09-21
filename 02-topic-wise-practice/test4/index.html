@@ -1,83 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Test 4 - Dynamic DOM Manipulation & Form Validation</title>
-    <link rel="stylesheet" href="style.css">
+<title>Dynamic Webpage</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+ font-family:Arial;
+ background:linear-gradient(135deg,#4facfe,#00f2fe);
+ min-height:100vh;
+}
+header{
+ background:#222;color:white;text-align:center;padding:20px;
+}
+.container{
+ width:95%;max-width:1200px;margin:20px auto;
+}
+.card{
+ background:white;padding:35px;min-height:200px;
+ margin-bottom:20px;border-radius:15px;
+ box-shadow:0 5px 15px #555;
+}
+input{
+ padding:12px;width:65%;margin:15px 0;
+}
+button{
+ padding:10px 15px;border:0;border-radius:5px;
+ background:#007bff;color:white;cursor:pointer;
+}
+button:hover{background:#0056b3}
+#clock{font-size:35px;margin-top:25px}
+li{margin:8px;padding:8px;background:#eee}
+</style>
 </head>
+
 <body>
 
-    <div class="app-container">
-        <header>
-            <h1>Interactive Lab Task Manager</h1>
-            <p>Practice Test 4: Dynamic Event Handling, Form Validation & DOM Updates</p>
-        </header>
+<header>
+<h1>Dynamic Webpage</h1>
+<p>Using HTML, CSS and JavaScript</p>
+</header>
 
-        <!-- Form Card -->
-        <section class="card">
-            <h2>Add New Lab Task</h2>
-            <form id="task-form" novalidate>
-                <div class="input-group">
-                    <label for="task-title">Task Title *</label>
-                    <input type="text" id="task-title" placeholder="e.g., Implement Express Authentication Router">
-                    <span class="error-msg" id="title-error"></span>
-                </div>
+<div class="container">
 
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="task-category">Category *</label>
-                        <select id="task-category">
-                            <option value="">Select Category</option>
-                            <option value="Frontend">Frontend (HTML/CSS/JS)</option>
-                            <option value="Backend">Backend (Node/Express)</option>
-                            <option value="Database">Database (MongoDB)</option>
-                        </select>
-                        <span class="error-msg" id="category-error"></span>
-                    </div>
+<div class="card">
+<h2>Welcome</h2>
+<input id="name" placeholder="Enter your name">
+<button onclick="welcome()">Submit</button>
+<p id="msg"></p>
+</div>
 
-                    <div class="input-group">
-                        <label for="task-priority">Priority *</label>
-                        <select id="task-priority">
-                            <option value="Low">Low</option>
-                            <option value="Medium" selected>Medium</option>
-                            <option value="High">High</option>
-                        </select>
-                    </div>
-                </div>
+<div class="card">
+<h2>Live Clock</h2>
+<p id="clock"></p>
+</div>
 
-                <button type="submit" id="add-btn" class="btn btn-add">Add Task to List</button>
-            </form>
-        </section>
+<div class="card">
+<h2>Task Manager</h2>
+<input id="task" placeholder="Enter task">
+<button onclick="addTask()">Add</button>
+<ul id="list"></ul>
+</div>
 
-        <!-- Dynamic List & Search Controls -->
-        <section class="card">
-            <div class="list-header">
-                <h2>Task Records (<span id="task-count">0</span>)</h2>
-                <input type="text" id="search-input" placeholder="🔍 Search tasks...">
-            </div>
+<div class="card">
+<h2>Colour Theme</h2>
+<button onclick="blue()">Blue</button>
+<button onclick="green()">Green</button>
+<button onclick="dark()">Dark</button>
+</div>
 
-            <table id="task-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Task Title</th>
-                        <th>Category</th>
-                        <th>Priority</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="task-body">
-                    <!-- Dynamic Rows Will Be Injected Here -->
-                </tbody>
-            </table>
-            <div id="empty-state" class="empty-msg">No lab tasks added yet. Fill out the form above to add your first task!</div>
-        </section>
-    </div>
+</div>
 
-    <!-- Notification Alert -->
-    <div id="toast" class="toast"></div>
+<script>
+function welcome(){
+ let n=document.getElementById("name").value;
+ document.getElementById("msg").innerHTML="Welcome "+n;
+}
 
-    <script src="script.js"></script>
+function clock(){
+ document.getElementById("clock").innerHTML=
+ new Date().toLocaleTimeString();
+}
+setInterval(clock,1000);clock();
+
+function addTask(){
+ let t=document.getElementById("task").value;
+ if(t!=""){
+  let li=document.createElement("li");
+  li.innerHTML=t;
+  document.getElementById("list").appendChild(li);
+ }
+}
+
+function blue(){
+ document.body.style.background=
+ "linear-gradient(135deg,#4facfe,#00f2fe)";
+}
+function green(){
+ document.body.style.background=
+ "linear-gradient(135deg,#43e97b,#38f9d7)";
+}
+function dark(){
+ document.body.style.background=
+ "linear-gradient(135deg,#232526,#414345)";
+}
+</script>
+
 </body>
 </html>
