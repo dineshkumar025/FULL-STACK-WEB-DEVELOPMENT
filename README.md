@@ -1,6 +1,6 @@
 # Full Stack Web Development Repository
 
-Welcome to the **Full Stack Web Development** repository. This repository is organized systematically to track observation records, topic-wise practice, assignments, and internal assessments.
+Welcome to the **Full Stack Web Development (23CM4121)** repository of **P. Dinesh Kumar (Roll No: A24126552101)** at **Anil Neerukonda Institute of Technology & Sciences (ANITS)**. This repository is organized systematically to track observation records, topic-wise practice, assignments, internal assessments, and the Unit V case study.
 
 ---
 
@@ -8,27 +8,34 @@ Welcome to the **Full Stack Web Development** repository. This repository is org
 
 ```text
 .
+├── case study/
+│   ├── backend/
+│   │   ├── .env.example
+│   │   ├── package.json
+│   │   └── server.js
+│   ├── frontend/
+│   │   ├── .env.example
+│   │   ├── index.html
+│   │   ├── package.json
+│   │   ├── vite.config.js
+│   │   └── src/
+│   │       ├── App.jsx
+│   │       ├── main.jsx
+│   │       └── style.css
+│   ├── Student_Management_System_Case_Study_Q3.pdf   # Complete 26-Page Case Study Report
+│   ├── .gitignore
+│   └── README.md
+│
 ├── 01-observation-and-record/
-│   ├── week-01-html5-and-css3/
-│   │   ├── screenshots/
-│   │   └── src/
-│   ├── week-02-javascript-es6-and-dom/
-│   │   ├── screenshots/
-│   │   └── src/
-│   ├── week-03-node-and-express-js/
-│   │   ├── screenshots/
-│   │   └── src/
-│   │       └── routes/
-│   ├── week-04-mongodb-and-mongoose/
-│   │   ├── screenshots/
-│   │   └── src/
-│   │       ├── models/
-│   │       └── controllers/
-│   └── week-05-full-stack-integration-mern/
-│       ├── screenshots/
-│       └── src/
-│           ├── client/
-│           └── server/
+│   ├── Observation/
+│   │   ├── Experiment-01-Static-Webpage/
+│   │   ├── Experiment-02-HTML5&CSS3/
+│   │   ├── Experiment-03-Javascript-Class and DOM/
+│   │   ├── Experiment-04-To-Do-List/
+│   │   ├── Experiment-05/
+│   │   └── Experiment-06/
+│   └── Record/
+│       └── Week 3/
 │
 ├── 02-topic-wise-practice/
 │   ├── test1/          # Static Webpage with HTML Elements, Tables & Forms
@@ -38,20 +45,23 @@ Welcome to the **Full Stack Web Development** repository. This repository is org
 │
 ├── 03-assignments/
 │   ├── assignment-01-responsive-portfolio/
-│   │   ├── screenshots/
-│   │   └── src/
 │   └── assignment-02-restful-api-service/
-│       ├── screenshots/
-│       └── src/
 │
 └── 04-assessments/
     ├── internal-assessment-01/
-    │   ├── screenshots/
-    │   └── src/
     └── internal-assessment-02/
-        ├── screenshots/
-        └── src/
 ```
+
+---
+
+## 🏆 Unit V Case Study: Student Management System (Question Q3)
+
+- **Student:** P. Dinesh Kumar (A24126552101)
+- **Allocated Question:** **Q3: Student Management System — MongoDB Atlas Configuration, Database & Collection Setup, and Express.js Backend Connection**
+- **Report PDF:** [`case study/Student_Management_System_Case_Study_Q3.pdf`](./case%20study/Student_Management_System_Case_Study_Q3.pdf)
+- **Case Study Directory:** [`case study/`](./case%20study/)
+- **Live React Demo:** [https://student-management-system-dinesh.vercel.app](https://student-management-system-dinesh.vercel.app)
+- **Live Express REST API:** [https://student-backend-dinesh.onrender.com/api/health](https://student-backend-dinesh.onrender.com/api/health)
 
 ---
 

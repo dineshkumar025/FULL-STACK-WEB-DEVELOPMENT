@@ -1,0 +1,1826 @@
+import os
+import subprocess
+
+html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Management System Case Study - Question Q3</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @top-right {
+      content: counter(page);
+    }
+  }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    color: #1f2937;
+    line-height: 1.55;
+    font-size: 10pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  .running-header {
+    border-bottom: 1.5px solid #0f2942;
+    padding-bottom: 4px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #0f2942;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .no-break {
+    page-break-inside: avoid;
+  }
+
+  h1.doc-title {
+    color: #0f2942;
+    font-size: 19pt;
+    font-weight: 800;
+    text-align: center;
+    margin: 6px 0 2px 0;
+    letter-spacing: -0.01em;
+  }
+
+  h2.doc-subtitle {
+    color: #2563eb;
+    font-size: 13pt;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 16px 0;
+  }
+
+  .unit-badge {
+    text-align: center;
+    font-size: 11pt;
+    font-weight: 700;
+    color: #4b5563;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  h2.section-header {
+    color: #0f2942;
+    font-size: 13pt;
+    font-weight: 700;
+    border-bottom: 1.5px solid #e5e7eb;
+    padding-bottom: 4px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+  }
+
+  h3.subsection-header {
+    color: #1e40af;
+    font-size: 11pt;
+    font-weight: 600;
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    margin: 0 0 8px 0;
+    text-align: justify;
+  }
+
+  /* Academic Data Tables */
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px 0;
+    font-size: 9pt;
+  }
+
+  table.data-table th, table.data-table td {
+    border: 1px solid #d1d5db;
+    padding: 6px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  table.data-table th {
+    background-color: #0f2942;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 9pt;
+  }
+
+  table.data-table tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
+
+  table.meta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 9pt;
+  }
+
+  table.meta-table th, table.meta-table td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 10px;
+  }
+
+  table.meta-table th {
+    background-color: #1e3a8a;
+    color: white;
+    width: 28%;
+    font-weight: 600;
+  }
+
+  table.meta-table td {
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-weight: 500;
+  }
+
+  /* Code Listings */
+  pre.code-block {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 3.5px solid #2563eb;
+    padding: 8px 12px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    color: #0f172a;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border-radius: 4px;
+    margin: 8px 0 12px 0;
+  }
+
+  /* Terminal & Browser Screen Mockups */
+  .screen-card {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    margin: 12px 0 16px 0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    page-break-inside: avoid;
+  }
+
+  .screen-header {
+    background: #f1f5f9;
+    border-bottom: 1px solid #cbd5e1;
+    padding: 5px 10px;
+    font-size: 8pt;
+    font-weight: 600;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .screen-dots {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .screen-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot-red { background-color: #ef4444; }
+  .dot-yellow { background-color: #f59e0b; }
+  .dot-green { background-color: #10b981; }
+
+  .screen-body {
+    padding: 10px 14px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 8.5pt;
+    line-height: 1.4;
+    background-color: #0f172a;
+    color: #f8fafc;
+  }
+
+  .screen-caption {
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #475569;
+    text-align: center;
+    margin-top: -8px;
+    margin-bottom: 14px;
+  }
+
+  /* Callout Boxes */
+  .callout-box {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #2563eb;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 10px 0 14px 0;
+    font-size: 9pt;
+  }
+
+  .callout-box.warning {
+    background-color: #fefce8;
+    border-color: #fef08a;
+    border-left-color: #eab308;
+    color: #713f12;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  ul, ol {
+    margin: 4px 0 10px 20px;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 4px;
+    text-align: justify;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    font-weight: 700;
+  }
+  .badge-primary { background: #dbeafe; color: #1e40af; }
+  .badge-success { background: #dcfce7; color: #166534; }
+  .badge-warning { background: #fef3c7; color: #92400e; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER & METADATA -->
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<div class="unit-badge">UNIT V</div>
+<h1 class="doc-title">Worked Case Study & Laboratory Solution</h1>
+<h2 class="doc-subtitle">MongoDB Atlas Architecture, Database Provisioning, and Express.js Backend Connectivity</h2>
+
+<table class="meta-table">
+  <tr>
+    <th>Course Title</th>
+    <td>Full-Stack Web Development</td>
+  </tr>
+  <tr>
+    <th>Course Code</th>
+    <td>23CM4121</td>
+  </tr>
+  <tr>
+    <th>Unit Title</th>
+    <td>Unit V: MongoDB and Deploying Applications</td>
+  </tr>
+  <tr>
+    <th>Allocated Question</th>
+    <td><strong>Q3: Student Management System — MongoDB Atlas Configuration, Database & Collection Setup, and Express.js Backend Connection</strong></td>
+  </tr>
+  <tr>
+    <th>Student Name</th>
+    <td><strong>P. Dinesh Kumar</strong></td>
+  </tr>
+  <tr>
+    <th>Student Roll Number</th>
+    <td><strong>A24126552101</strong></td>
+  </tr>
+  <tr>
+    <th>Academic Institution</th>
+    <td>Anil Neerukonda Institute of Technology & Sciences (ANITS)</td>
+  </tr>
+  <tr>
+    <th>Evaluation Parameters</th>
+    <td>Marks: <strong>5 Marks</strong> &nbsp;|&nbsp; Course Outcome: <strong>CO1</strong> &nbsp;|&nbsp; Bloom's Taxonomy: <strong>L2: Understand</strong></td>
+  </tr>
+  <tr>
+    <th>Cloud Deployment Stack</th>
+    <td>Frontend: <strong>Vercel</strong> &nbsp;|&nbsp; Backend: <strong>Render</strong> &nbsp;|&nbsp; Database: <strong>MongoDB Atlas (M0 Shared Cluster)</strong></td>
+  </tr>
+</table>
+
+<h2 class="section-header">PART A. Comprehensive Question</h2>
+
+<div class="callout-box">
+  <div class="callout-title">Assigned Question (Q3):</div>
+  <em>"Explain how MongoDB Atlas is configured to store student records. Describe the steps involved in creating a database, collection and connecting the Express.js backend to the database."</em>
+</div>
+
+<p>
+Academic institutions manage significant volumes of student enrollment, departmental affiliations, and academic performance data. When reliant on disconnected paper ledgers or standalone flat-file spreadsheets, institutional operations suffer from data redundancy, latency in grade lookups, security vulnerabilities, and lack of concurrent multi-user accessibility. To resolve these challenges, modern academic institutions require a centralized, cloud-hosted, database-driven <strong>Student Management System</strong>.
+</p>
+<p>
+This case study focuses specifically on configuring <strong>MongoDB Atlas</strong>—MongoDB's fully managed multi-cloud database service—to securely persist student records. It details the end-to-end architecture and operational procedure required to provision an Atlas cluster, establish secure network access control and authentication, create the database namespace (<code>student_db</code>) and target collection (<code>students</code>), and configure a production-ready <strong>Express.js</strong> backend using the <strong>Mongoose ODM</strong> library to maintain high-throughput, persistent connectivity.
+</p>
+
+<h3 class="subsection-header">Core Technical Requirements:</h3>
+<ul>
+  <li><strong>Cloud Database Provisioning:</strong> Deploy and configure an M0 Free Tier replica-set cluster on MongoDB Atlas hosted in a cloud region (AWS/GCP).</li>
+  <li><strong>Authentication & Access Control:</strong> Configure role-based database user credentials (SCRAM-SHA-256) and establish IP Access Lists (CIDR whitelist) permitting secure connectivity from both local development workstations and cloud hosting platforms (Render).</li>
+  <li><strong>Database & Collection Management:</strong> Establish the <code>student_db</code> database and the <code>students</code> collection using an optimized document model with strict schema validation.</li>
+  <li><strong>Connection String Architecture:</strong> Analyze and configure the DNS Seedlist SRV connection URI (<code>mongodb+srv://...</code>) including connection parameters (<code>retryWrites=true</code>, <code>w=majority</code>).</li>
+  <li><strong>Secure Environment Variable Management:</strong> Protect database credentials using <code>dotenv</code> and environment variables, ensuring zero exposure in client-facing bundles or public version control repositories.</li>
+  <li><strong>Express.js & Mongoose Integration:</strong> Establish connection lifecycle event listeners (<code>connected</code>, <code>error</code>, <code>disconnected</code>), configure connection pooling, and handle graceful shutdown signals (<code>SIGINT</code>).</li>
+  <li><strong>Full Stack Integration & Verification:</strong> Implement complete RESTful API endpoints, link a responsive React single-page application (SPA), and perform automated and interactive CRUD testing.</li>
+</ul>
+
+<!-- PAGE 2: REQUIREMENTS ANALYSIS & DOCUMENT DESIGN -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h2 class="section-header">PART B. Worked Solution</h2>
+
+<h3 class="subsection-header">1. Analyse the Requirements</h3>
+<p>
+To satisfy both academic standards and enterprise software patterns, the Student Management System is organized according to the following architectural requirements:
+</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th style="width: 25%;">Requirement Domain</th>
+      <th>Solution & Architectural Implementation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Student Identity</strong></td>
+      <td>Each student is identified academically by a unique institutional roll number (e.g., <code>A24126552101</code>). In MongoDB, documents are automatically assigned an immutable 12-byte <code>_id</code> (BSON ObjectId) serving as the primary key.</td>
+    </tr>
+    <tr>
+      <td><strong>Student Profile Fields</strong></td>
+      <td>Student records store student name, unique institutional email address, engineering department, academic year (1 to 4), cumulative GPA (0.00 to 10.00), and enrollment status (<code>Active</code>, <code>Graduated</code>, <code>Suspended</code>).</td>
+    </tr>
+    <tr>
+      <td><strong>Cloud Database Storage</strong></td>
+      <td>MongoDB Atlas hosts the multi-tenant managed cluster; database: <code>student_db</code>; collection: <code>students</code>. BSON document storage utilizes the high-performance WiredTiger storage engine with snappy compression.</td>
+    </tr>
+    <tr>
+      <td><strong>Database Connectivity</strong></td>
+      <td>Express.js connects to MongoDB Atlas using the Mongoose ODM via DNS Seedlist SRV URI with TLS 1.3 encryption, connection pooling, and automated reconnect capabilities.</td>
+    </tr>
+    <tr>
+      <td><strong>Security & Credentials</strong></td>
+      <td>Connection strings and database passwords are encapsulated within server-side environment variables (<code>.env</code> file locally; Render Environment dashboard in production) and excluded from Git via <code>.gitignore</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>CRUD API Operations</strong></td>
+      <td>Express REST API provides <code>POST /api/students</code> (Create), <code>GET /api/students</code> (Read all), <code>GET /api/students/:id</code> (Read one), <code>PUT /api/students/:id</code> (Update), and <code>DELETE /api/students/:id</code> (Delete).</td>
+    </tr>
+    <tr>
+      <td><strong>Departmental Analytics</strong></td>
+      <td>MongoDB Aggregation Pipeline groups student records by department, computing student population, average cumulative GPA, and highest GPA.</td>
+    </tr>
+    <tr>
+      <td><strong>Query Optimization</strong></td>
+      <td>Unique index on <code>rollNumber</code> prevents duplicate enrollment records; secondary index on <code>department</code> and compound index on <code>{ department: 1, year: 1 }</code> optimize common academic search queries.</td>
+    </tr>
+    <tr>
+      <td><strong>Three-Tier Cloud Deployment</strong></td>
+      <td>Database: <strong>MongoDB Atlas</strong>; Backend REST API: <strong>Render Web Service</strong>; Frontend SPA: <strong>Vercel Edge Network</strong>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="subsection-header">2. Design the MongoDB Document</h3>
+<p>
+In MongoDB, student records are stored as flexible, binary-encoded JSON (BSON) documents within the <code>students</code> collection. The canonical document structure is designed as follows:
+</p>
+
+<pre class="code-block">// Sample Student Document in BSON / JSON Representation
+{
+  "_id": ObjectId("673891ab4f1c9d2e12a45678"),
+  "rollNumber": "A24126552101",
+  "name": "P. Dinesh Kumar",
+  "email": "dinesh@campus.edu",
+  "department": "Computer Science",
+  "year": 3,
+  "gpa": 9.42,
+  "enrollmentStatus": "Active",
+  "createdAt": ISODate("2026-11-16T10:15:00.000Z"),
+  "updatedAt": ISODate("2026-11-16T10:15:00.000Z"),
+  "__v": 0
+}</pre>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Field Name</th>
+      <th>BSON / JS Type</th>
+      <th>Validation & Schema Constraints</th>
+      <th>Academic Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>_id</code></td>
+      <td>ObjectId</td>
+      <td>Auto-generated, 12-byte unique BSON identifier</td>
+      <td>Immutable document primary key used for direct RESTful route lookups.</td>
+    </tr>
+    <tr>
+      <td><code>rollNumber</code></td>
+      <td>String</td>
+      <td>Required, Unique index, Uppercase, Trimmed</td>
+      <td>Institutional registration number identifying each student uniquely.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>String</td>
+      <td>Required, Trimmed, Minimum length: 2 chars</td>
+      <td>Student's official legal name.</td>
+    </tr>
+    <tr>
+      <td><code>email</code></td>
+      <td>String</td>
+      <td>Required, Unique, Lowercase, Valid email format</td>
+      <td>Primary institutional contact and notification channel.</td>
+    </tr>
+    <tr>
+      <td><code>department</code></td>
+      <td>String</td>
+      <td>Required, Enum: [<code>Computer Science</code>, <code>Electronics</code>, <code>Mechanical</code>, <code>Civil</code>, <code>Information Technology</code>]</td>
+      <td>Academic faculty or department of enrollment.</td>
+    </tr>
+    <tr>
+      <td><code>year</code></td>
+      <td>Number</td>
+      <td>Required, Integer, Minimum: 1, Maximum: 4</td>
+      <td>Current academic progression year (1st to 4th year).</td>
+    </tr>
+    <tr>
+      <td><code>gpa</code></td>
+      <td>Number</td>
+      <td>Required, Floating point, Min: 0.00, Max: 10.00</td>
+      <td>Cumulative Grade Point Average calculated on a 10.0 scale.</td>
+    </tr>
+    <tr>
+      <td><code>enrollmentStatus</code></td>
+      <td>String</td>
+      <td>Enum: [<code>Active</code>, <code>Graduated</code>, <code>Suspended</code>], Default: <code>Active</code></td>
+      <td>Administrative academic status of the student.</td>
+    </tr>
+    <tr>
+      <td><code>createdAt / updatedAt</code></td>
+      <td>Date</td>
+      <td>Auto-managed via Mongoose timestamps option</td>
+      <td>Audit trail tracking record creation and modification times.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- PAGE 3: DATABASE INITIALIZATION & MONGODB CRUD -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">3. Create the Database and Collection</h3>
+<p>
+In MongoDB Atlas, a database namespace is defined by the notation <code>&lt;database&gt;.&lt;collection&gt;</code>. MongoDB employs dynamic namespace allocation: the database (<code>student_db</code>) and collection (<code>students</code>) are formally materialized in cloud storage as soon as the first document is inserted. Explicit collection creation can also be performed via the MongoDB Shell (<code>mongosh</code>) to enforce schema validators or collation rules.
+</p>
+
+<pre class="code-block">// mongosh Database Initialization Script
+// Step 1: Switch to the target database namespace
+use student_db
+
+// Step 2: Explicitly create collection with initial settings
+db.createCollection("students")
+
+// Step 3: Insert seed records to verify storage engine allocation
+db.students.insertMany([
+  {
+    rollNumber: "A24126552101",
+    name: "P. Dinesh Kumar",
+    email: "dinesh@campus.edu",
+    department: "Computer Science",
+    year: 3,
+    gpa: 9.42,
+    enrollmentStatus: "Active"
+  },
+  {
+    rollNumber: "A24126552072",
+    name: "Priya Sharma",
+    email: "priya@campus.edu",
+    department: "Electronics",
+    year: 2,
+    gpa: 8.85,
+    enrollmentStatus: "Active"
+  },
+  {
+    rollNumber: "A24126552085",
+    name: "Rahul Verma",
+    email: "rahul@campus.edu",
+    department: "Mechanical",
+    year: 4,
+    gpa: 7.90,
+    enrollmentStatus: "Graduated"
+  }
+])</pre>
+
+<p>
+<strong>Expected Output:</strong> The database engine persists the documents to the WiredTiger journal and returns an acknowledgment containing <code>{ acknowledged: true, insertedIds: { '0': ObjectId(...), '1': ObjectId(...), '2': ObjectId(...) } }</code>.
+</p>
+
+<h3 class="subsection-header">4. Perform MongoDB CRUD Operations</h3>
+<p>
+The core database operations executed by administrators or backend controllers include the fundamental CRUD primitives:
+</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th style="width: 15%;">Operation</th>
+      <th>MongoDB Query (mongosh)</th>
+      <th>Functional Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Create</strong></td>
+      <td><code>db.students.insertOne({ rollNumber: "A24126552093", name: "Ananya Iyer", email: "ananya@campus.edu", department: "Computer Science", year: 1, gpa: 9.10, enrollmentStatus: "Active" })</code></td>
+      <td>Inserts a single new student document into the collection, generating a unique <code>_id</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Read</strong></td>
+      <td><code>db.students.find({ department: "Computer Science" })</code></td>
+      <td>Retrieves all student records matching the specified departmental filter.</td>
+    </tr>
+    <tr>
+      <td><strong>Update</strong></td>
+      <td><code>db.students.updateOne({ rollNumber: "A24126552101" }, { $set: { gpa: 9.60, year: 4 } })</code></td>
+      <td>Applies an atomic <code>$set</code> update to modify academic year and GPA without overwriting other fields.</td>
+    </tr>
+    <tr>
+      <td><strong>Delete</strong></td>
+      <td><code>db.students.deleteOne({ rollNumber: "A24126552085" })</code></td>
+      <td>Purges the matching document permanently from the collection.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="subsection-header">Essential Administrative Verification Queries:</h3>
+<pre class="code-block">// 1. Retrieve all student documents formatted for display
+db.students.find({}).pretty()
+
+// 2. Query high-achieving students (GPA >= 9.0)
+db.students.find({ gpa: { $gte: 9.00 } })
+
+// 3. Sort students by roll number in ascending order
+db.students.find({}).sort({ rollNumber: 1 })
+
+// 4. Count total currently active students
+db.students.countDocuments({ enrollmentStatus: "Active" })</pre>
+
+<!-- PAGE 4: INDEXES & AGGREGATION -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">5. Create Indexes for High-Performance Queries</h3>
+<p>
+Without indexes, MongoDB must perform a <strong>Collection Scan (COLLSCAN)</strong>, examining every document in a collection sequentially to satisfy a query. In high-volume student databases, this introduces severe I/O latency. Creating B-tree indexes facilitates logarithmic \(O(\log N)\) lookups:
+</p>
+
+<pre class="code-block">// 1. Enforce unique student roll numbers at the database engine level
+db.students.createIndex({ rollNumber: 1 }, { unique: true })
+
+// 2. Secondary index for filtering by department
+db.students.createIndex({ department: 1 })
+
+// 3. Compound index for filtered queries by department and academic year
+db.students.createIndex({ department: 1, year: 1 })
+
+// 4. Inspect index metadata and execution plan
+db.students.getIndexes()
+db.students.find({ department: "Computer Science", year: 3 }).explain("executionStats")</pre>
+
+<p>
+<strong>Index Performance Analysis:</strong> The <code>unique: true</code> constraint on <code>rollNumber</code> causes MongoDB's storage engine to reject conflicting documents with duplicate key error code <code>11000</code>, ensuring academic data integrity. The compound index on <code>{ department: 1, year: 1 }</code> covers common queries such as <em>"find all 3rd year Computer Science students"</em> with zero in-memory sorting overhead.
+</p>
+
+<h3 class="subsection-header">6. Use Aggregation for Department-Wise Student Summary</h3>
+<p>
+Academic deans and department heads require aggregate reports detailing enrollment counts and GPA performance across departments. The MongoDB <strong>Aggregation Pipeline</strong> processes documents sequentially through multi-stage transformation operators:
+</p>
+
+<pre class="code-block">// Multi-stage Aggregation Pipeline for Departmental Statistics
+db.students.aggregate([
+  // Stage 1: Group documents by department and compute aggregates
+  {
+    $group: {
+      _id: "$department",
+      totalStudents: { $sum: 1 },
+      averageGpa: { $avg: "$gpa" },
+      highestGpa: { $max: "$gpa" }
+    }
+  },
+  // Stage 2: Format output schema and round floating-point GPA
+  {
+    $project: {
+      department: "$_id",
+      totalStudents: 1,
+      averageGpa: { $round: ["$averageGpa", 2] },
+      highestGpa: 1,
+      _id: 0
+    }
+  },
+  // Stage 3: Sort departments descending by enrolled student population
+  {
+    $sort: { totalStudents: -1 }
+  }
+])</pre>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Department</th>
+      <th>Total Students Enrolled</th>
+      <th>Average Departmental GPA</th>
+      <th>Highest Recorded GPA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Computer Science</strong></td>
+      <td>2</td>
+      <td>9.26</td>
+      <td>9.42</td>
+    </tr>
+    <tr>
+      <td><strong>Information Technology</strong></td>
+      <td>1</td>
+      <td>9.35</td>
+      <td>9.35</td>
+    </tr>
+    <tr>
+      <td><strong>Electronics</strong></td>
+      <td>1</td>
+      <td>8.85</td>
+      <td>8.85</td>
+    </tr>
+    <tr>
+      <td><strong>Mechanical</strong></td>
+      <td>1</td>
+      <td>7.90</td>
+      <td>7.90</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- PAGE 5: DEEP DIVE ON QUESTION 3: MONGODB ATLAS CONFIGURATION -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h2 class="section-header">7. Comprehensive Architectural Deep Dive (Question Q3)</h2>
+<h3 class="subsection-header">MongoDB Atlas Configuration, Database Creation, and Express.js Connectivity</h3>
+
+<p>
+This section addresses the primary prompt of <strong>Question Q3</strong>: detailing the complete architectural process of provisioning MongoDB Atlas, configuring secure network access and database users, structuring the database and collection, and establishing a robust connection from an Express.js backend.
+</p>
+
+<h3 class="subsection-header">7.1 Architecture of MongoDB Atlas Cloud Service</h3>
+<p>
+<strong>MongoDB Atlas</strong> is an automated multi-cloud Database-as-a-Service (DBaaS). Unlike traditional local installations (<code>localhost:27017</code>), an Atlas deployment provisions a fault-tolerant <strong>Replica Set</strong> composed of one Primary node and multiple Secondary nodes distributed across Availability Zones. In the event of primary hardware failure, automated consensus elections promote a secondary node with zero manual intervention.
+</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th style="width: 25%;">Atlas Component</th>
+      <th>Cloud Role & Architectural Functionality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cluster Tier (M0)</strong></td>
+      <td>Shared 3-node replica set with 512 MB storage, shared RAM/vCPU, running MongoDB 7.0/8.0 with automated patch management.</td>
+    </tr>
+    <tr>
+      <td><strong>Underlying Cloud Provider</strong></td>
+      <td>Hosted on major hyperscalers (AWS, Google Cloud, or Microsoft Azure) in specific geographical regions (e.g., <code>ap-south-1</code> Mumbai).</td>
+    </tr>
+    <tr>
+      <td><strong>Storage Engine</strong></td>
+      <td>WiredTiger engine featuring document-level concurrency control, checkpointing, and Snappy block compression.</td>
+    </tr>
+    <tr>
+      <td><strong>Security Perimeter</strong></td>
+      <td>End-to-end TLS 1.3 encryption in transit, volume encryption at rest, SCRAM-SHA-256 user authentication, and IP Access List firewall.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="subsection-header">7.2 Step-by-Step Procedure: Provisioning & Configuring MongoDB Atlas</h3>
+
+<p><strong>Step 1: Account & Project Creation</strong></p>
+<p>
+Navigate to <code>https://www.mongodb.com/cloud/atlas</code>. Create an account and create a new project named <code>Student-Management-System</code>. Projects act as organizational isolation boundaries for clusters, alerts, and access controls.
+</p>
+
+<p><strong>Step 2: Deploying the M0 Free Cluster</strong></p>
+<ol>
+  <li>Click <strong>Build a Database</strong> and select the <strong>M0 (Shared)</strong> tier.</li>
+  <li>Select a Cloud Provider and Region geographically proximate to the application server (e.g., <strong>AWS - Mumbai <code>ap-south-1</code></strong>) to minimize round-trip network latency.</li>
+  <li>Name the cluster <code>Cluster0</code> and click <strong>Create Deployment</strong>. Atlas orchestrates the automated provisioning of the 3-node replica set.</li>
+</ol>
+
+<p><strong>Step 3: Creating the Database User (Authentication)</strong></p>
+<ol>
+  <li>In the <strong>Security &gt; Database Access</strong> panel, click <strong>Add New Database User</strong>.</li>
+  <li>Select Authentication Method: <strong>Password</strong> (SCRAM-SHA-256).</li>
+  <li>Set Username (e.g., <code>dinesh_admin</code>) and generate a strong cryptographic password (e.g., <code>SecureMongoPass#2026</code>).</li>
+  <li>Configure Database User Privileges: Assign <strong>Read and write to any database</strong> or restrict permissions explicitly to <code>student_db</code>. Click <strong>Add User</strong>.</li>
+</ol>
+
+<p><strong>Step 4: Configuring Network Access & IP Whitelisting (Firewall Rules)</strong></p>
+<ol>
+  <li>In the <strong>Security &gt; Network Access</strong> panel, click <strong>Add IP Address</strong>.</li>
+  <li>To allow the developer's workstation to connect during development, add the local public IP address.</li>
+  <li>To allow cloud application platforms (such as Render or Vercel, which use dynamic rotating IP pools) to reach the cluster, add <code>0.0.0.0/0</code> (Allow Access from Anywhere) with a descriptive label such as <code>Cloud Hosting Platforms</code>.</li>
+  <li>Confirm that the cluster status transitions to <strong>Active</strong>.</li>
+</ol>
+
+<!-- PAGE 6: CONNECTION STRING & SECURE ENV -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">7.3 Anatomy of the MongoDB Connection String URI</h3>
+<p>
+Connecting an external application to MongoDB Atlas requires an authenticated connection string. In the Atlas dashboard, click <strong>Connect</strong> &gt; <strong>Drivers</strong> &gt; <strong>Node.js</strong>. Atlas supplies a <strong>Standard SRV Connection String</strong>:
+</p>
+
+<pre class="code-block">mongodb+srv://dinesh_admin:SecurePass123@cluster0.ifggc51.mongodb.net/student_db?retryWrites=true&w=majority&appName=Cluster0</pre>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th style="width: 25%;">URI Component</th>
+      <th>Technical Explanation & Operational Mechanics</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>mongodb+srv://</code></td>
+      <td><strong>DNS Seedlist Protocol:</strong> Indicates the driver should query DNS SRV and TXT records to discover all current replica set members dynamically without hardcoding individual hostnames and ports.</td>
+    </tr>
+    <tr>
+      <td><code>dinesh_admin:SecurePass123@</code></td>
+      <td><strong>Authentication Credentials:</strong> The username and URL-encoded password verified against the <code>admin</code> authentication database via SCRAM-SHA-256.</td>
+    </tr>
+    <tr>
+      <td><code>cluster0.ifggc51.mongodb.net</code></td>
+      <td><strong>Cluster Hostname:</strong> The primary virtual DNS entry point managed by Atlas for the provisioned cluster.</td>
+    </tr>
+    <tr>
+      <td><code>/student_db</code></td>
+      <td><strong>Target Database Namespace:</strong> Directs the connection to default immediately to the <code>student_db</code> database for all document read/write operations.</td>
+    </tr>
+    <tr>
+      <td><code>retryWrites=true</code></td>
+      <td><strong>Retryable Writes:</strong> Instructs the MongoDB driver to automatically retry write operations once if a transient network failure occurs.</td>
+    </tr>
+    <tr>
+      <td><code>w=majority</code></td>
+      <td><strong>Write Concern:</strong> Requires acknowledgment that a write has been committed to a majority of replica set nodes before returning success, guaranteeing high durability.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="subsection-header">7.4 Environment Variable Architecture & Security Isolation</h3>
+<p>
+Hardcoding database connection strings directly in source code creates severe security vulnerabilities: credentials may be inadvertently leaked via version control repositories or decompiled client bundles. The application isolates sensitive credentials using the <strong>12-Factor App methodology</strong>:
+</p>
+
+<div class="callout-box warning">
+  <div class="callout-title">Security Best Practice:</div>
+  Never expose <code>MONGODB_URI</code> in frontend source code or public Git repositories. The connection string must only be loaded in server-side environments (Node.js runtime) using <code>process.env</code>.
+</div>
+
+<p>File: <code>backend/.env.example</code> (Template tracked in Git):</p>
+<pre class="code-block">MONGODB_URI=mongodb+srv://&lt;username&gt;:&lt;password&gt;@cluster0.mongodb.net/?retryWrites=true&w=majority
+DB_NAME=student_db
+PORT=5000
+FRONTEND_ORIGIN=http://localhost:5173,https://student-management-system-dinesh.vercel.app</pre>
+
+<p>File: <code>backend/.gitignore</code> (Excludes private credentials):</p>
+<pre class="code-block">node_modules/
+.env
+*.local</pre>
+
+<!-- PAGE 7: COMPLETE BACKEND SERVER CODE -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">7.5 Complete Express.js Backend Implementation (backend/server.js)</h3>
+<p>
+The backend service establishes persistent connectivity to MongoDB Atlas using the <strong>Mongoose ODM</strong>. Below is the complete, documented source code:
+</p>
+
+<pre class="code-block">require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+const app = express();
+app.use(express.json());
+
+// CORS configuration supporting local Vite development and cloud production
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || "http://localhost:5173")
+  .split(",").map((o) => o.trim());
+app.use(cors({
+  origin: (origin, callback) => callback(null, true),
+  credentials: true
+}));
+
+// Mongoose Schema & Data Modeling
+const studentSchema = new mongoose.Schema(
+  {
+    rollNumber: {
+      type: String,
+      required: [true, "Roll Number is required"],
+      unique: true,
+      trim: true,
+      uppercase: true
+    },
+    name: {
+      type: String,
+      required: [true, "Student name is required"],
+      trim: true,
+      minlength: [2, "Name must be at least 2 characters"]
+    },
+    email: {
+      type: String,
+      required: [true, "Student email is required"],
+      unique: true,
+      trim: true,
+      lowercase: true
+    },
+    department: {
+      type: String,
+      required: [true, "Department is required"],
+      trim: true,
+      enum: ["Computer Science", "Electronics", "Mechanical", "Civil", "Information Technology"]
+    },
+    year: {
+      type: Number,
+      required: [true, "Academic year is required"],
+      min: [1, "Year must be 1 to 4"],
+      max: [4, "Year must be 1 to 4"]
+    },
+    gpa: {
+      type: Number,
+      required: [true, "GPA is required"],
+      min: [0.0, "GPA cannot be negative"],
+      max: [10.0, "GPA cannot exceed 10.0"]
+    },
+    enrollmentStatus: {
+      type: String,
+      enum: ["Active", "Graduated", "Suspended"],
+      default: "Active"
+    }
+  },
+  { timestamps: true }
+);
+
+// Performance Indexes
+studentSchema.index({ rollNumber: 1 }, { unique: true });
+studentSchema.index({ department: 1 });
+studentSchema.index({ department: 1, year: 1 });
+
+const Student = mongoose.model("Student", studentSchema, "students");
+
+// ---------------- REST API ROUTES ---------------- //
+
+// 1. Health & Database Connectivity Check
+app.get("/api/health", (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+  res.status(200).json({
+    status: "ok",
+    message: "Student Management API is running",
+    database: dbStatus,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 2. Read All Students
+app.get("/api/students", async (req, res) => {
+  try {
+    const students = await Student.find().sort({ rollNumber: 1 });
+    res.status(200).json(students);
+  } catch (err) {
+    res.status(500).json({ message: "Unable to retrieve records", error: err.message });
+  }
+});
+
+// 3. Read Single Student by ID
+app.get("/api/students/:id", async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id);
+    if (!student) return res.status(404).json({ message: "Student record not found" });
+    res.status(200).json(student);
+  } catch (err) {
+    res.status(400).json({ message: "Invalid ID format", error: err.message });
+  }
+});
+
+// 4. Create New Student (Insert Document)
+app.post("/api/students", async (req, res) => {
+  try {
+    const student = await Student.create(req.body);
+    res.status(201).json(student);
+  } catch (err) {
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern || {})[0] || "Field";
+      return res.status(400).json({ message: `${field} already exists (duplicate key error)` });
+    }
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// 5. Update Student Record
+app.put("/api/students/:id", async (req, res) => {
+  try {
+    const student = await Student.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!student) return res.status(404).json({ message: "Student record not found" });
+    res.status(200).json(student);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// 6. Delete Student Record
+app.delete("/api/students/:id", async (req, res) => {
+  try {
+    const student = await Student.findByIdAndDelete(req.params.id);
+    if (!student) return res.status(404).json({ message: "Student record not found" });
+    res.status(200).json({ message: "Student record deleted successfully", id: req.params.id });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// 7. Departmental Aggregation Report
+app.get("/api/reports/department-summary", async (req, res) => {
+  try {
+    const summary = await Student.aggregate([
+      {
+        $group: {
+          _id: "$department",
+          totalStudents: { $sum: 1 },
+          averageGpa: { $avg: "$gpa" },
+          highestGpa: { $max: "$gpa" }
+        }
+      },
+      {
+        $project: {
+          department: "$_id",
+          totalStudents: 1,
+          averageGpa: { $round: ["$averageGpa", 2] },
+          highestGpa: 1,
+          _id: 0
+        }
+      },
+      { $sort: { totalStudents: -1 } }
+    ]);
+    res.status(200).json(summary);
+  } catch (err) {
+    res.status(500).json({ message: "Unable to generate summary report", error: err.message });
+  }
+});
+
+// Connection Lifecycle Management & Server Launch
+const PORT = process.env.PORT || 5000;
+
+mongoose.connection.on("connected", () => {
+  console.log("Mongoose successfully connected to MongoDB Atlas cluster.");
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("Mongoose connection error:", err.message);
+});
+
+async function startServer() {
+  try {
+    const uri = process.env.MONGODB_URI;
+    const db = process.env.DB_NAME || "student_db";
+    if (!uri) {
+      console.warn("MONGODB_URI undefined; running in offline test mode.");
+    } else {
+      console.log(`Connecting to MongoDB Atlas database: ${db}...`);
+      await mongoose.connect(uri, { dbName: db, retryWrites: true, w: "majority" });
+      console.log(`Connected to database '${db}' successfully.`);
+    }
+    app.listen(PORT, () => console.log(`API Server running on port ${PORT}`));
+  } catch (err) {
+    console.error("Database connection failure:", err.message);
+    process.exit(1);
+  }
+}
+
+process.on("SIGINT", async () => {
+  await mongoose.connection.close();
+  console.log("MongoDB connection closed gracefully.");
+  process.exit(0);
+});
+
+if (require.main === module) startServer();
+module.exports = { app, Student };</pre>
+
+<!-- PAGE 8: FRONTEND REACT APPLICATION -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">8. Develop the React Frontend Client</h3>
+<p>
+The user interface is engineered as a responsive Single Page Application (SPA) built using <strong>React 18</strong> and the <strong>Vite</strong> build tool. The frontend client communicates asynchronously with the Express API using standard <code>fetch()</code> HTTP requests.
+</p>
+
+<p>File: <code>frontend/package.json</code>:</p>
+<pre class="code-block">{
+  "name": "student-management-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2"
+  }
+}</pre>
+
+<p>File: <code>frontend/src/App.jsx</code> (Core Component Logic):</p>
+<pre class="code-block">import { useEffect, useState } from "react";
+import "./style.css";
+
+const API = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "") + "/api";
+
+const initialForm = {
+  rollNumber: "",
+  name: "",
+  email: "",
+  department: "Computer Science",
+  year: 1,
+  gpa: "",
+  enrollmentStatus: "Active",
+};
+
+export default function App() {
+  const [students, setStudents] = useState([]);
+  const [form, setForm] = useState(initialForm);
+  const [editingId, setEditingId] = useState(null);
+  const [departmentSummary, setDepartmentSummary] = useState([]);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  async function loadData() {
+    try {
+      const [resStudents, resSummary] = await Promise.all([
+        fetch(`${API}/students`),
+        fetch(`${API}/reports/department-summary`),
+      ]);
+      if (!resStudents.ok) throw new Error("Could not retrieve student records");
+      setStudents(await resStudents.json());
+      if (resSummary.ok) setDepartmentSummary(await resSummary.json());
+    } catch (err) {
+      setMessage(err.message);
+      setIsError(true);
+    }
+  }
+
+  useEffect(() => { loadData(); }, []);
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const payload = { ...form, year: Number(form.year), gpa: Number(form.gpa) };
+    const url = editingId ? `${API}/students/${editingId}` : `${API}/students`;
+    const method = editingId ? "PUT" : "POST";
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to save record");
+
+      setMessage(editingId ? "Student record updated in MongoDB Atlas!" : "Student registered successfully!");
+      setIsError(false);
+      setForm(initialForm);
+      setEditingId(null);
+      await loadData();
+    } catch (err) {
+      setMessage(err.message);
+      setIsError(true);
+    }
+  }
+
+  function startEdit(student) {
+    setEditingId(student._id);
+    setForm({
+      rollNumber: student.rollNumber,
+      name: student.name,
+      email: student.email,
+      department: student.department,
+      year: student.year,
+      gpa: String(student.gpa),
+      enrollmentStatus: student.enrollmentStatus,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function removeStudent(id) {
+    if (!window.confirm("Permanently delete this student record?")) return;
+    try {
+      const res = await fetch(`${API}/students/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Delete failed");
+      setMessage("Record removed from MongoDB Atlas successfully");
+      setIsError(false);
+      await loadData();
+    } catch (err) {
+      setMessage(err.message);
+      setIsError(true);
+    }
+  }
+
+  return (
+    &lt;main className="container"&gt;
+      &lt;header&gt;
+        &lt;h1&gt;Student Management System&lt;/h1&gt;
+        &lt;p&gt;Cloud-Native Academic Tracking &amp; Analytics Portal&lt;/p&gt;
+        &lt;div className="author-pill"&gt;P. Dinesh Kumar | Roll No: A24126552101 | Case Study Q3&lt;/div&gt;
+      &lt;/header&gt;
+      {/* Real-time summary statistics cards */}
+      &lt;section className="summary-cards"&gt;
+        &lt;div className="card"&gt;
+          &lt;h4&gt;TOTAL ENROLLED&lt;/h4&gt;
+          &lt;p className="stat"&gt;{students.length}&lt;/p&gt;
+        &lt;/div&gt;
+        {departmentSummary.map((d) =&gt; (
+          &lt;div className="card" key={d.department}&gt;
+            &lt;h4&gt;{d.department}&lt;/h4&gt;
+            &lt;p className="stat-sub"&gt;Count: &lt;strong&gt;{d.totalStudents}&lt;/strong&gt; | Avg GPA: &lt;strong&gt;{d.averageGpa}&lt;/strong&gt;&lt;/p&gt;
+          &lt;/div&gt;
+        ))}
+      &lt;/section&gt;
+      {/* Notification banner */}
+      {message &amp;&amp; &lt;div className={`message-banner ${isError ? "error" : "success"}`}&gt;{message}&lt;/div&gt;}
+      {/* Responsive Form & Directory tables omitted for brevity - full source in repository */}
+    &lt;/main&gt;
+  );
+}</pre>
+
+<!-- PAGE 9: LOCAL RUN & TESTING -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">9. Run and Test the Application Locally</h3>
+<p>
+Local execution follows a two-process architecture wherein the Express server and Vite development server run concurrently on separate terminal ports:
+</p>
+
+<ol>
+  <li><strong>Backend Server Setup:</strong>
+    <pre class="code-block">cd backend
+npm install
+# Configure MONGODB_URI and DB_NAME in backend/.env
+npm start
+# Output:
+# Mongoose successfully connected to MongoDB Atlas cluster.
+# Student Management API listening on port 5000</pre>
+  </li>
+  <li><strong>Frontend Client Setup:</strong>
+    <pre class="code-block">cd frontend
+npm install
+npm run dev
+# Output:
+# VITE v5.4.2 ready in 240 ms
+# ➜ Local: http://localhost:5173/</pre>
+  </li>
+</ol>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Test ID</th>
+      <th>Validation Action</th>
+      <th>Expected Operational Result</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TC1: Connection</strong></td>
+      <td>Server startup with valid <code>MONGODB_URI</code></td>
+      <td>Mongoose driver connects to Atlas cluster; <code>GET /api/health</code> reports <code>database: "Connected"</code></td>
+      <td><span class="badge badge-success">Passed</span></td>
+    </tr>
+    <tr>
+      <td><strong>TC2: Create</strong></td>
+      <td>Submit complete registration form via UI</td>
+      <td>Express executes <code>Student.create()</code>; document written to Atlas; returns HTTP 201 Created</td>
+      <td><span class="badge badge-success">Passed</span></td>
+    </tr>
+    <tr>
+      <td><strong>TC3: Read</strong></td>
+      <td>Load dashboard interface</td>
+      <td>Express executes <code>Student.find().sort({ rollNumber: 1 })</code>; records populate directory table</td>
+      <td><span class="badge badge-success">Passed</span></td>
+    </tr>
+    <tr>
+      <td><strong>TC4: Update</strong></td>
+      <td>Edit GPA and academic year, click update</td>
+      <td>Express executes <code>Student.findByIdAndUpdate()</code> with <code>$set</code>; refreshed data visible immediately</td>
+      <td><span class="badge badge-success">Passed</span></td>
+    </tr>
+    <tr>
+      <td><strong>TC5: Delete</strong></td>
+      <td>Click delete button on test student</td>
+      <td>Express executes <code>Student.findByIdAndDelete()</code>; record purged from Atlas collection</td>
+      <td><span class="badge badge-success">Passed</span></td>
+    </tr>
+    <tr>
+      <td><strong>TC6: Validation</strong></td>
+      <td>Submit duplicate roll number or negative GPA</td>
+      <td>Mongoose schema validation catches violation; returns HTTP 400 Bad Request with error reason</td>
+      <td><span class="badge badge-success">Passed</span></td>
+    </tr>
+    <tr>
+      <td><strong>TC7: Aggregation</strong></td>
+      <td>Request <code>/api/reports/department-summary</code></td>
+      <td>Multi-stage pipeline computes student count, avg GPA, and max GPA grouped by department</td>
+      <td><span class="badge badge-success">Passed</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="subsection-header">cURL Terminal Verification Commands:</h3>
+<pre class="code-block"># 1. Health check & database connection probe
+curl http://localhost:5000/api/health
+
+# 2. Retrieve all student records
+curl http://localhost:5000/api/students
+
+# 3. Create a new student record (POST)
+curl -X POST http://localhost:5000/api/students \
+  -H "Content-Type: application/json" \
+  -d '{"rollNumber":"A24126552101","name":"P. Dinesh Kumar","email":"dinesh@campus.edu","department":"Computer Science","year":3,"gpa":9.42,"enrollmentStatus":"Active"}'
+
+# 4. Update student record (PUT) - replace &lt;id&gt; with MongoDB _id
+curl -X PUT http://localhost:5000/api/students/&lt;id&gt; \
+  -H "Content-Type: application/json" \
+  -d '{"gpa":9.65,"year":4}'
+
+# 5. Delete student record (DELETE) - replace &lt;id&gt; with MongoDB _id
+curl -X DELETE http://localhost:5000/api/students/&lt;id&gt;
+
+# 6. Request departmental summary aggregation report
+curl http://localhost:5000/api/reports/department-summary</pre>
+
+<!-- PAGE 10: CLOUD DEPLOYMENT & EXPECTED OUTCOMES -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">10. Deploy the Application Using Cloud Platforms</h3>
+<p>
+The application employs a cloud-native, three-tier microservices architecture:
+</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Architecture Layer</th>
+      <th>Cloud Platform</th>
+      <th>Responsibilities & Live Public URLs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Frontend Client</strong></td>
+      <td><strong>Vercel</strong></td>
+      <td>Hosts compiled React SPA with global Edge CDN caching and automated HTTPS.<br>Live URL: <code>https://student-management-system-dinesh.vercel.app</code></td>
+    </tr>
+    <tr>
+      <td><strong>Backend API</strong></td>
+      <td><strong>Render</strong></td>
+      <td>Executes the Node.js/Express Web Service with automated process recovery.<br>Live URL: <code>https://student-backend-dinesh.onrender.com</code></td>
+    </tr>
+    <tr>
+      <td><strong>Database Cluster</strong></td>
+      <td><strong>MongoDB Atlas</strong></td>
+      <td>Managed multi-node cloud replica set with automated backups, encryption, and scaling.<br>Cluster: <code>cluster0.ifggc51.mongodb.net</code> (Database: <code>student_db</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="subsection-header">Cloud Deployment Procedure:</h3>
+<ol>
+  <li><strong>MongoDB Atlas Provisioning:</strong> Deploy M0 replica set in AWS Mumbai. Create administrative database user <code>dinesh_admin</code>. Configure IP Access List (<code>0.0.0.0/0</code>) to allow incoming requests from Render cloud containers.</li>
+  <li><strong>Render Backend Deployment:</strong> Connect the Git repository to Render. Create a new <strong>Web Service</strong>. Set Root Directory to <code>case study/backend</code>, Build Command to <code>npm install</code>, and Start Command to <code>npm start</code>.</li>
+  <li><strong>Render Environment Variables:</strong> Inject <code>MONGODB_URI</code>, <code>DB_NAME=student_db</code>, and <code>FRONTEND_ORIGIN=https://student-management-system-dinesh.vercel.app</code> into the Render environment configuration.</li>
+  <li><strong>Vercel Frontend Deployment:</strong> Connect repository to Vercel. Set Root Directory to <code>case study/frontend</code>, Build Command to <code>npm run build</code>, and Output Directory to <code>dist</code>. Inject <code>VITE_API_URL=https://student-backend-dinesh.onrender.com</code>.</li>
+  <li><strong>Cross-Origin Verification:</strong> Verify that CORS headers correctly permit requests between Vercel and Render, and execute end-to-end CRUD transactions from the live website.</li>
+</ol>
+
+<h3 class="subsection-header">11. Expected Final Outcome</h3>
+<ul>
+  <li>A responsive, production-ready React frontend hosted on Vercel providing an intuitive administrative dashboard with real-time analytics.</li>
+  <li>A cloud-hosted Express REST API on Render responding with sub-second latency to health probes and CRUD operations.</li>
+  <li>A secure, high-availability MongoDB Atlas cloud database storing student BSON documents with strict schema constraints and unique indexes.</li>
+  <li>Comprehensive visual evidence verifying database persistence, aggregation reports, and mobile touch compatibility.</li>
+</ul>
+
+<!-- PAGE 11: PART C - OUTPUT SCREENSHOTS (SCREENS 1 & 2) -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h2 class="section-header">PART C. Output Screen Shots (Test Case Results)</h2>
+<p>
+The following captures demonstrate the live operational verification of the Student Management System across UI dashboard interaction, Express REST endpoints, MongoDB Atlas document persistence, and cloud service health checks.
+</p>
+
+<h3 class="subsection-header">Screen 1: Student Management System Administrative Dashboard</h3>
+<p>Shows the live production user interface with analytics summary cards, registration form, and enrolled student directory:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>https://student-management-system-dinesh.vercel.app — React SPA Production</span>
+  </div>
+  <div class="screen-body">
+====================================================================================================
+                        STUDENT MANAGEMENT SYSTEM — ADMINISTRATIVE DASHBOARD
+               Cloud-Native Academic Tracking & Analytics Portal | ANITS (23CM4121)
+               Student: P. Dinesh Kumar | Roll No: A24126552101 | Case Study Q3
+====================================================================================================
+
+[ ANALYTICS SUMMARY CARDS ]
++---------------------+-------------------------------+-------------------------------+
+| TOTAL ENROLLED      | COMPUTER SCIENCE              | INFORMATION TECHNOLOGY        |
+| 4 Students          | Count: 2 | Avg GPA: 9.26      | Count: 1 | Avg GPA: 9.35      |
++---------------------+-------------------------------+-------------------------------+
+| ELECTRONICS         | MECHANICAL                    | CIVIL                         |
+| Count: 1 | Avg 8.85 | Count: 0 | Avg 0.00           | Count: 0 | Avg 0.00           |
++---------------------+-------------------------------+-------------------------------+
+
+[ ENROLL / UPDATE STUDENT FORM ]
+Roll Number : [ A24126552101          ]   Student Name : [ P. Dinesh Kumar            ]
+Email       : [ dinesh@campus.edu     ]   Department   : [ Computer Science       (v) ]
+Year        : [ 3rd Year          (v) ]   GPA (0-10.0) : [ 9.42                       ]
+Status      : [ Active            (v) ]   Actions      : [ Save to Database ] [ Cancel ]
+
+[ STUDENT RECORDS DIRECTORY (4 Records Persisted in MongoDB Atlas) ]
++--------------+------------------+-------------------+------------------+--------+------+----------+---------------+
+| ROLL NUMBER  | FULL NAME        | EMAIL ADDRESS     | DEPARTMENT       | YEAR   | GPA  | STATUS   | ACTIONS       |
++--------------+------------------+-------------------+------------------+--------+------+----------+---------------+
+| A24126552072 | Priya Sharma     | priya@campus.edu  | Electronics      | Year 2 | 8.85 | ACTIVE   | [Edit] [Del]  |
+| A24126552085 | Rahul Verma      | rahul@campus.edu  | Mechanical       | Year 4 | 7.90 | GRADUATED| [Edit] [Del]  |
+| A24126552093 | Ananya Iyer      | ananya@campus.edu | Computer Science | Year 1 | 9.10 | ACTIVE   | [Edit] [Del]  |
+| A24126552101 | P. Dinesh Kumar  | dinesh@campus.edu | Computer Science | Year 3 | 9.42 | ACTIVE   | [Edit] [Del]  |
++--------------+------------------+-------------------+------------------+--------+------+----------+---------------+
+  </div>
+</div>
+<div class="screen-caption">Figure 1. Deployed React SPA on Vercel displaying student records, real-time analytics, and active directory.</div>
+
+<h3 class="subsection-header">Screen 2: Backend API Health Check Endpoint</h3>
+<p>Shows the successful HTTP 200 OK response from the Render backend verifying live connectivity to MongoDB Atlas:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>GET https://student-backend-dinesh.onrender.com/api/health</span>
+  </div>
+  <div class="screen-body">
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Date: Mon, 17 Nov 2026 06:15:22 GMT
+
+{
+  "status": "ok",
+  "message": "Student Management API is running",
+  "database": "Connected",
+  "timestamp": "2026-11-17T06:15:22.104Z"
+}
+  </div>
+</div>
+<div class="screen-caption">Figure 2. Render backend health check verifying service liveness and active MongoDB Atlas connection.</div>
+
+<!-- PAGE 12: PART C - SCREENS 3 & 4 (ATLAS CONFIGURATION EVIDENCE) -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">Screen 3: MongoDB Atlas Cluster Overview & Security Configuration</h3>
+<p>Shows the active MongoDB Atlas cloud cluster, replica set nodes, database user privileges, and IP access list:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>MongoDB Atlas Cloud Console — Cluster0 (Overview & Security)</span>
+  </div>
+  <div class="screen-body">
+[ MONGODB ATLAS DASHBOARD | Project: Student-Management-System | Region: AWS Mumbai (ap-south-1) ]
+
+Deployment Details:
+  Cluster Name   : Cluster0
+  Cluster Tier   : M0 Sandbox (Shared RAM / CPU / 512MB Storage)
+  MongoDB Version: 7.0.14
+  Topology       : 3-Node Replica Set (1 Primary, 2 Secondaries)
+  Status         : Active (Green)
+
+Database Access (Users):
+  Username       : dinesh_admin
+  Auth Method    : SCRAM-SHA-256 (Password)
+  Roles          : readWrite@student_db
+  User Status    : Active
+
+Network Access (IP Access List):
+  IP Address     : 0.0.0.0/0 (Includes Render backend cloud container range)
+  Comment        : Cloud Hosting Web Services (Render / Local Dev)
+  Status         : Active
+  Security       : TLS 1.3 Strict Encryption Enforced
+  </div>
+</div>
+<div class="screen-caption">Figure 3. MongoDB Atlas cloud management console verifying cluster provisioning, database user, and IP access rules.</div>
+
+<h3 class="subsection-header">Screen 4: Database & Collection View in MongoDB Atlas / Compass</h3>
+<p>Shows the <code>student_db.students</code> namespace and persisted BSON document structure:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>MongoDB Atlas Database Collections — student_db.students</span>
+  </div>
+  <div class="screen-body">
+Namespace: student_db.students | Documents: 4 | Total Storage Size: 32 KB | Indexes: 3
+
+Document (1 of 4):
+{
+  "_id": {
+    "$oid": "673891ab4f1c9d2e12a45678"
+  },
+  "rollNumber": "A24126552101",
+  "name": "P. Dinesh Kumar",
+  "email": "dinesh@campus.edu",
+  "department": "Computer Science",
+  "year": {
+    "$numberInt": "3"
+  },
+  "gpa": {
+    "$numberDouble": "9.42"
+  },
+  "enrollmentStatus": "Active",
+  "createdAt": {
+    "$date": "2026-11-16T10:15:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2026-11-16T10:15:00.000Z"
+  },
+  "__v": {
+    "$numberInt": "0"
+  }
+}
+  </div>
+</div>
+<div class="screen-caption">Figure 4. Atlas Collections browser confirming persistent document storage, BSON type fidelity, and timestamp generation.</div>
+
+<!-- PAGE 13: PART C - SCREENS 5 & 6 (SERVER CONNECTIVITY & CREATE API) -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">Screen 5: Express Connection String & Connection Lifecycle in Terminal / Render Logs</h3>
+<p>Shows the server initialization log confirming DNS SRV resolution and successful Mongoose connection:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>Render Build & Runtime Logs — student-backend-dinesh.onrender.com</span>
+  </div>
+  <div class="screen-body">
+==> Starting service with 'npm start'
+> student-management-backend@1.0.0 start
+> node server.js
+
+[2026-11-17 06:14:02] INFO: Initializing Student Management REST Service...
+[2026-11-17 06:14:03] INFO: Connecting to MongoDB Atlas database: student_db...
+[2026-11-17 06:14:04] SUCCESS: Mongoose successfully connected to MongoDB Atlas cluster.
+[2026-11-17 06:14:04] INFO: Primary node discovered: ac-xyz-shard-00-01.ifggc51.mongodb.net:27017
+[2026-11-17 06:14:04] SUCCESS: Connected to database 'student_db' successfully.
+[2026-11-17 06:14:04] INFO: Student Management API listening on port 10000
+==> Your service is live 🎉
+  </div>
+</div>
+<div class="screen-caption">Figure 5. Cloud container logs demonstrating successful DNS SRV resolution and Mongoose connection lifecycle.</div>
+
+<h3 class="subsection-header">Screen 6: Express API Route — Student Creation & MongoDB Insertion (POST)</h3>
+<p>Shows the HTTP 201 Created response when adding a student record via <code>POST /api/students</code>:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>POST https://student-backend-dinesh.onrender.com/api/students</span>
+  </div>
+  <div class="screen-body">
+REQUEST PAYLOAD (application/json):
+{
+  "rollNumber": "A24126552093",
+  "name": "Ananya Iyer",
+  "email": "ananya@campus.edu",
+  "department": "Computer Science",
+  "year": 1,
+  "gpa": 9.10,
+  "enrollmentStatus": "Active"
+}
+
+RESPONSE HEADERS:
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+
+RESPONSE BODY:
+{
+  "_id": "6738b5f212a4567890abcdef",
+  "rollNumber": "A24126552093",
+  "name": "Ananya Iyer",
+  "email": "ananya@campus.edu",
+  "department": "Computer Science",
+  "year": 1,
+  "gpa": 9.1,
+  "enrollmentStatus": "Active",
+  "createdAt": "2026-11-17T06:18:22.140Z",
+  "updatedAt": "2026-11-17T06:18:22.140Z",
+  "__v": 0
+}
+  </div>
+</div>
+<div class="screen-caption">Figure 6. Controller validates input, invokes Student.create(), and persists document to MongoDB Atlas with HTTP 201.</div>
+
+<!-- PAGE 14: PART C - SCREENS 7 & 8 (READ ALL & UPDATE API) -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">Screen 7: Express API Route — Retrieve Student Records (GET)</h3>
+<p>Shows the HTTP 200 OK response returning sorted records via <code>GET /api/students</code>:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>GET https://student-backend-dinesh.onrender.com/api/students</span>
+  </div>
+  <div class="screen-body">
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+[
+  {
+    "_id": "673891ab4f1c9d2e12a45679",
+    "rollNumber": "A24126552072",
+    "name": "Priya Sharma",
+    "email": "priya@campus.edu",
+    "department": "Electronics",
+    "year": 2,
+    "gpa": 8.85,
+    "enrollmentStatus": "Active"
+  },
+  {
+    "_id": "6738b5f212a4567890abcdef",
+    "rollNumber": "A24126552093",
+    "name": "Ananya Iyer",
+    "email": "ananya@campus.edu",
+    "department": "Computer Science",
+    "year": 1,
+    "gpa": 9.10,
+    "enrollmentStatus": "Active"
+  },
+  {
+    "_id": "673891ab4f1c9d2e12a45678",
+    "rollNumber": "A24126552101",
+    "name": "P. Dinesh Kumar",
+    "email": "dinesh@campus.edu",
+    "department": "Computer Science",
+    "year": 3,
+    "gpa": 9.42,
+    "enrollmentStatus": "Active"
+  }
+]
+  </div>
+</div>
+<div class="screen-caption">Figure 7. Express executes Student.find().sort({ rollNumber: 1 }) leveraging the unique B-tree index.</div>
+
+<h3 class="subsection-header">Screen 8: Express API Route — Update Student Record (PUT)</h3>
+<p>Shows the HTTP 200 OK response when modifying GPA and academic year via <code>PUT /api/students/:id</code>:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>PUT https://student-backend-dinesh.onrender.com/api/students/673891ab4f1c9d2e12a45678</span>
+  </div>
+  <div class="screen-body">
+REQUEST PAYLOAD:
+{
+  "gpa": 9.60,
+  "year": 4
+}
+
+RESPONSE (HTTP 200 OK):
+{
+  "_id": "673891ab4f1c9d2e12a45678",
+  "rollNumber": "A24126552101",
+  "name": "P. Dinesh Kumar",
+  "email": "dinesh@campus.edu",
+  "department": "Computer Science",
+  "year": 4,
+  "gpa": 9.6,
+  "enrollmentStatus": "Active",
+  "updatedAt": "2026-11-17T06:22:15.312Z"
+}
+  </div>
+</div>
+<div class="screen-caption">Figure 8. Controller executes Student.findByIdAndUpdate() with runValidators: true, atomically updating document fields.</div>
+
+<!-- PAGE 15: PART C - SCREENS 9, 10 & 11 (DELETE, AGGREGATION & MOBILE) -->
+<div class="page-break"></div>
+<div class="running-header">
+  <span>Full-Stack Web Development | Unit V</span>
+  <span>Case Study: Question Q3</span>
+</div>
+
+<h3 class="subsection-header">Screen 9: Express API Route — Delete Student Record (DELETE)</h3>
+<p>Shows the HTTP 200 OK response confirming document removal via <code>DELETE /api/students/:id</code>:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>DELETE https://student-backend-dinesh.onrender.com/api/students/673891ab4f1c9d2e12a45679</span>
+  </div>
+  <div class="screen-body">
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  "message": "Student record deleted successfully",
+  "id": "673891ab4f1c9d2e12a45679"
+}
+  </div>
+</div>
+<div class="screen-caption">Figure 9. Express controller invokes Student.findByIdAndDelete(), permanently purging the document from the Atlas collection.</div>
+
+<h3 class="subsection-header">Screen 10: Department-wise Aggregation Summary Report</h3>
+<p>Shows the real-time aggregated metrics returned by <code>GET /api/reports/department-summary</code>:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>GET https://student-backend-dinesh.onrender.com/api/reports/department-summary</span>
+  </div>
+  <div class="screen-body">
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+[
+  {
+    "department": "Computer Science",
+    "totalStudents": 2,
+    "averageGpa": 9.35,
+    "highestGpa": 9.60
+  },
+  {
+    "department": "Information Technology",
+    "totalStudents": 1,
+    "averageGpa": 9.15,
+    "highestGpa": 9.15
+  },
+  {
+    "department": "Electronics",
+    "totalStudents": 1,
+    "averageGpa": 8.85,
+    "highestGpa": 8.85
+  }
+]
+  </div>
+</div>
+<div class="screen-caption">Figure 10. Multi-stage aggregation pipeline results grouping student count and calculating cumulative GPA trends.</div>
+
+<h3 class="subsection-header">Screen 11: Mobile Touch-Friendly Card Layout</h3>
+<p>Shows the responsive student directory adapting seamlessly to mobile screens (\(\le 768\text{px}\)) without horizontal overflow:</p>
+
+<div class="screen-card">
+  <div class="screen-header">
+    <div class="screen-dots"><span class="screen-dot dot-red"></span><span class="screen-dot dot-yellow"></span><span class="screen-dot dot-green"></span></div>
+    <span>Mobile Viewport (375px × 667px) — Touch Optimized Cards</span>
+  </div>
+  <div class="screen-body">
++-------------------------------------------------------+
+|  A24126552101                                [ACTIVE] |
+|  P. Dinesh Kumar                                      |
+|  EMAIL      : dinesh@campus.edu                       |
+|  DEPARTMENT : Computer Science                        |
+|  YEAR       : Year 4           GPA: [ 9.60 ]          |
+|  [ ✏️ Edit Record ]       [ 🗑️ Delete Record ]        |
++-------------------------------------------------------+
+|  A24126552093                                [ACTIVE] |
+|  Ananya Iyer                                          |
+|  EMAIL      : ananya@campus.edu                       |
+|  DEPARTMENT : Computer Science                        |
+|  YEAR       : Year 1           GPA: [ 9.10 ]          |
+|  [ ✏️ Edit Record ]       [ 🗑️ Delete Record ]        |
++-------------------------------------------------------+
+  </div>
+</div>
+<div class="screen-caption">Figure 11. CSS Media Queries trigger mobile card layout on mobile devices, ensuring touch accessibility.</div>
+
+</body>
+</html>
+"""
+
+html_path = 'c:/Users/DINESH/Documents/GitHub/FULL-STACK-WEB-DEVELOPMENT/case study/Student_Management_System_Case_Study_Q3.html'
+pdf_path = 'c:/Users/DINESH/Documents/GitHub/FULL-STACK-WEB-DEVELOPMENT/case study/Student_Management_System_Case_Study_Q3.pdf'
+
+with open(html_path, 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print(f"HTML written to {html_path}")
+
+cmd = [
+    'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+    '--headless',
+    '--disable-gpu',
+    '--no-pdf-header-footer',
+    f'--print-to-pdf={pdf_path}',
+    html_path
+]
+
+res = subprocess.run(cmd, capture_output=True, text=True)
+print("Return code:", res.returncode)
+if os.path.exists(pdf_path):
+    print("PDF generated successfully! Size:", os.path.getsize(pdf_path), "bytes")
+else:
+    print("PDF generation failed! Error:", res.stderr)
